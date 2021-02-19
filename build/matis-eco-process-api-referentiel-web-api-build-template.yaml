@@ -1,0 +1,124 @@
+apiVersion: v1
+kind: Template
+metadata:
+  name: matis-eco-process-api-referentiel-web-api-build
+  annotations: 
+    openshift.io/display-name: "M@tis Template for BuildConfig to install resources for environment"
+    iconClass: "icon-shadowman"
+    tags: "docker,dotnet,matis,eco"
+    openshift.io/provider-display-name: "Safran AE, Red Hat."
+objects:
+
+# BUILDCONFIG: ${MATIS_ECO_BUILD_CONFIG_BUILD_NAME}
+- apiVersion: build.openshift.io/v1
+  kind: BuildConfig
+  metadata:
+    name: ${MATIS_ECO_BUILD_CONFIG_BUILD_NAME}
+    namespace: ${MATIS_ECO_NAMESPACE}
+    labels:
+      pipeline: ${MATIS_BUILD_CONFIG_BUILD_NAME}
+  spec:
+    output:
+      to:
+        kind: DockerImage
+        name: ${MATIS_ECO_QUAY_REGISTRY}/${MATIS_ECO_COMPONENT_IMAGE_NAME}:${MATIS_ECO_IMAGE_TAG}
+      pushSecret:
+        name: ${QUAY_CRDENTIALS}
+    resources:
+      limits:
+        cpu: '0.5'
+        memory: 500Mi
+    source:
+      type: Git
+      git:
+        uri: ${MATIS_ECO_GIT_REPO}/${MATIS_ECO_GIT_PROJECT_NAME}
+      sourceSecret:
+        name: ${GITLAB_CREDENTIALS}
+      triggers:
+        - type: ConfigChange
+    strategy:
+      type: Docker
+      dockerStrategy:
+        from:
+          kind: DockerImage
+          name: ${SAFRAN_QUAY_REGISTRY}/${MATIS_ECO_BASE_IMAGE}
+        env:
+          - name: username
+            valueFrom:
+              secretKeyRef:
+                name: ${NEXUS_CREDENTIALS}
+                key: username
+          - name: password
+            valueFrom:
+              secretKeyRef:
+                name: ${NEXUS_CREDENTIALS}
+                key: password
+
+# PARAMETERS
+parameters:
+  - displayName: Matis Build Config Name
+    description: "The name of Matis BuildConfig to Build the Microservice."
+    name: MATIS_ECO_BUILD_CONFIG_BUILD_NAME
+    value: 'matis-eco-process-api-referentiel-web-api-build'
+    required: true
+  - displayName : Matis ECO Namespace
+    description: The namespace where the resources of Matis ECO will be created
+    name : MATIS_ECO_NAMESPACE
+    value: safranae-portfolioopmatiseco-matis-me-int
+    required: true
+  - displayName: Adreese Registry Quay
+    description: "Name of the registry where we will find Matis ECO images"
+    name: MATIS_ECO_QUAY_REGISTRY
+    value: 'quay.apps.prd.dc1.cloud.safran/safranae-portfolioopmatiseco-matis-me-int'
+    required: true
+  - displayName: Name of the image
+    description: "Name of the Matis ECO Microservice image"
+    name: MATIS_ECO_COMPONENT_IMAGE_NAME
+    value: process-api-referentiel-web-api
+    required: true
+  - displayName: Tag of the image
+    description: The tag of Matis ECO Microservice used.
+    name: MATIS_ECO_IMAGE_TAG
+    value: latest
+    required: true
+  - displayName: Quay Credentials
+    description: The secret contaning Quay credentials
+    name: QUAY_CRDENTIALS
+    value: quay-pull-secret
+    required: true
+  - displayName : Gitlab Repository name
+    description: The Name of Gitlab Repository where we found Matis Microservice.
+    name : MATIS_ECO_GIT_REPO
+    value: https://git.cloud.safran/safranae/portfolioopmatiseco/matis-me-int
+    required : true
+  - displayName: Gitlab project
+    description: The Gitlab Project where we found Matis ECO Microservice sources
+    name: MATIS_ECO_GIT_PROJECT_NAME
+    value: process/matiseco.processapi.referentiel-maj.git
+    required: true
+  - displayName: Nexus Credentials.
+    description: The nexus credentials used to store Matis ECO Artefacts
+    name: NEXUS_CREDENTIALS
+    value: 'nexus-secret'
+    required: true
+  - displayName: Gitlab Credentials
+    description: The Gitlab Credentials used to access repositories
+    name: GITLAB_CREDENTIALS
+    value: 'gitlab-auth'
+  - displayName: Name of the base Image
+    description: The Name of the base image used to build the microservice
+    name: MATIS_ECO_BASE_IMAGE
+    value: 'dotnet-50'
+  - description: Safran Quay Registry
+    displayName: The name of Safran AE Quay Registry
+    name: SAFRAN_QUAY_REGISTRY
+    value: quay.apps.prd.dc1.cloud.safran/redhat
+    required: true
+  
+
+labels:
+  pipeline: mastis-build-processapi-referentiel
+  version: v0.0.1
+  module: matis_eco
+  template: matis-processapi-referentiel-build-template
+ 
