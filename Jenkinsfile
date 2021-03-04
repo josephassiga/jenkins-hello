@@ -59,7 +59,7 @@ pipeline {
                     //script 
                     //{
                                 // Get a Hash commit to pass to the tag image
-                                APP_IMAGE_TAG = "${params.ENVIRONMENT == 'AP' ? 'PromoteToAP' : params.ENVIRONMENT == 'OP' ? 'PromoteToOP' : 'PromoteToDEV'}"
+                                APP_IMAGE_TAG = "${params.ENVIRONMENT} == 'AP' ? 'PromoteToAP' : ${params.ENVIRONMENT} == 'OP' ? 'PromoteToOP' : 'PromoteToDEV'"
                                 echo "**************************************************"
                                 echo "The commit HASH is ${APP_IMAGE_TAG}"
                                 echo "**************************************************"
