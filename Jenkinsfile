@@ -36,7 +36,7 @@ pipeline {
         parameters{
             string(name: 'BRANCH', defaultValue: 'main', description: 'Name of the branch to use.')
             string(name: 'CLUSTER_NAME', defaultValue: 'non-production', description: 'Name of the cluster where ressources will be deployed.')
-            choice(name: 'ENVIRONMENT', choices: ['INT', 'AP', 'OP'], description: 'The name of the environement where we want to deploy/build resources.')
+            choice(name: 'ENVIRONMENT', choices: ['','INT', 'AP', 'OP'], description: 'The name of the environement where we want to deploy/build resources.')
             string(name: 'MATIS_ECO_NAMESPACE', defaultValue: 'safranae-portfolioopmatiseco-matis-me-int', description: 'Name of the Openshift namespace to use.')
             string(name: 'JENKINS_ACCOUNT', defaultValue: 'safranae-portfolioopmatiseco-matis-me-int-jenkins-z15', description: 'Name of the Openshift Jenkins Account used to deploy resources on the cluster.')
             string(name: 'SOURCES_URL', defaultValue: 'https://github.com/josephassiga/jenkins-hello.git', description: 'Gitlab repository source of the application.')
@@ -59,18 +59,20 @@ pipeline {
 
 
                 script {
-                    switch(params.ENVIRONMENT) {
+                   /* switch(params.ENVIRONMENT) {
                         case "AP": APP_IMAGE_TAG='PromoteToAP'; break
                         case "OP": APP_IMAGE_TAG='PromoteToOP'; break
                         case "INT": APP_IMAGE_TAG=sh (script: "git log -n 1 --pretty=format:'%h'", returnStdout: true).trim(); break
-                    }
+                    }*/
+
+                    APP_IMAGE_TAG = "${env.ENVIRONMENT == 'master' ? env.ENVIRONMENT : env.RELEASE_DEPLOY_ENV}"
                 }
                     //script 
                     //{
                                 // Get a Hash commit to pass to the tag image
                                 //APP_IMAGE_TAG = "${params.ENVIRONMENT} == 'AP' ? 'PromoteToAP' : ${params.ENVIRONMENT} == 'OP' ? 'PromoteToOP' : 'PromoteToDEV'"
                                 echo "**************************************************"
-                                echo "The commit HASH is ${APP_IMAGE_TAG}"
+                                echo "The Image tag used is : ${APP_IMAGE_TAG}"
                                 echo "**************************************************"
                    // } // script
                 } // steps
