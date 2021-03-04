@@ -65,7 +65,7 @@ pipeline {
                         case "INT": APP_IMAGE_TAG=sh (script: "git log -n 1 --pretty=format:'%h'", returnStdout: true).trim(); break
                     }*/
 
-                    APP_IMAGE_TAG = "${env.ENVIRONMENT == 'master' ? env.ENVIRONMENT : env.RELEASE_DEPLOY_ENV}"
+                    APP_IMAGE_TAG = "${env.ENVIRONMENT == 'INT' ? 'PromoteToINT' : env.ENVIRONMENT == 'OP' ? 'PromoteToOP' : 'PromoteToAP' }"
                 }
                     //script 
                     //{
