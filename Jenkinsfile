@@ -53,7 +53,7 @@ pipeline {
                         
                     checkout([$class: 'GitSCM', 
                             branches: [[name: "*/${env.BRANCH}"]], 
-                            userRemoteConfigs:[[credentialsId:  'gitlab', url: "${env.SOURCES_URL}"]]
+                            userRemoteConfigs:[[url: "${env.SOURCES_URL}"]]
                     ])
                     
                     script 
