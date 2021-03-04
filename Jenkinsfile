@@ -56,14 +56,14 @@ pipeline {
                             userRemoteConfigs:[[url: "${env.SOURCES_URL}"]]
                     ])
                     
-                    script 
-                    {
+                    //script 
+                    //{
                                 // Get a Hash commit to pass to the tag image
                                 APP_IMAGE_TAG = ${params.ENVIRONMENT == 'AP'} ? 'PromoteToAP' :  ${params.ENVIRONMENT == 'OP'} ? 'PromoteToOP' : sh (script: "git log -n 1 --pretty=format:'%h'", returnStdout: true)
                                 echo "**************************************************"
                                 echo "The commit HASH is ${APP_IMAGE_TAG}"
                                 echo "**************************************************"
-                    } // script
+                   // } // script
                 } // steps
             } // stage
         } // stages
