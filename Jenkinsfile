@@ -62,7 +62,7 @@ pipeline {
                     switch(params.ENVIRONMENT) {
                         case "AP": APP_IMAGE_TAG='PromoteToAP'; break
                         case "OP": APP_IMAGE_TAG='PromoteToOP'; break
-                        case "INT": APP_IMAGE_TAG=sh(returnStdout: true, script: 'git rev-parse --abbrev-ref HEAD').trim(); break
+                        case "INT": APP_IMAGE_TAG=sh (script: "git log -n 1 --pretty=format:'%h'", returnStdout: true).trim(); break
                     }
                 }
                     //script 
