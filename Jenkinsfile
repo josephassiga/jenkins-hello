@@ -73,7 +73,7 @@ pipeline {
                                 //APP_IMAGE_TAG = "${params.ENVIRONMENT} == 'AP' ? 'PromoteToAP' : ${params.ENVIRONMENT} == 'OP' ? 'PromoteToOP' : 'PromoteToDEV'"
                                 echo "**************************************************"
                                 echo "The Image tag used is : ${APP_IMAGE_TAG}"
-                                echo "The Image tag used is : ${env}"
+                                echo "The Image tag used is : sh 'printenv'"
                                 echo "**************************************************"
                    // } // script
                 } // steps
