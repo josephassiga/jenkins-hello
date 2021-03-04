@@ -56,10 +56,19 @@ pipeline {
                             userRemoteConfigs:[[url: "${env.SOURCES_URL}"]]
                     ])
                     
+
+
+                script {
+                    switch(params.ENVIRONMENT) {
+                        case "INT": APP_IMAGE_TAG='PromoteToAP'; break
+                        case "AP": APP_IMAGE_TAG='PromoteToOP'; break
+                        case "OP": APP_IMAGE_TAG=sh (script: "git log -n 1 --pretty=format:'%h'", returnStdout: true); break
+                    }
+                }
                     //script 
                     //{
                                 // Get a Hash commit to pass to the tag image
-                                APP_IMAGE_TAG = "${params.ENVIRONMENT} == 'AP' ? 'PromoteToAP' : ${params.ENVIRONMENT} == 'OP' ? 'PromoteToOP' : 'PromoteToDEV'"
+                                //APP_IMAGE_TAG = "${params.ENVIRONMENT} == 'AP' ? 'PromoteToAP' : ${params.ENVIRONMENT} == 'OP' ? 'PromoteToOP' : 'PromoteToDEV'"
                                 echo "**************************************************"
                                 echo "The commit HASH is ${APP_IMAGE_TAG}"
                                 echo "**************************************************"
